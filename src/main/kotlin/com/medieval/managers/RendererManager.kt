@@ -2,6 +2,7 @@ package com.medieval.managers
 
 import com.medieval.foundation.Entity
 import com.medieval.ui.foundation.UIBaseComponent
+import org.joml.Vector3f
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS
@@ -138,6 +139,8 @@ class RendererManager(
             } else 0.0
         }
 
+    private val clearColor: Vector3f = Vector3f(0f, 0f, 0f)
+
     fun initWindow() {
 
         // Setup an error callback. The default implementation
@@ -222,6 +225,7 @@ class RendererManager(
         //GameManager.logMessage(message = "Vendor: " + glGetString(GL_VENDOR))
 
         gm.logMessage(message = """
+            LOCAL: RENDERER_MANAGER -> 
             GPU RENDERING CAPABILITIES INFO
             =========================================================================
             OpenGL version: $version
@@ -294,9 +298,9 @@ class RendererManager(
 
             // Set the clear color
             glClearColor(
-                gm.timeWeatherManager.skyColor.x,
-                gm.timeWeatherManager.skyColor.y,
-                gm.timeWeatherManager.skyColor.z,
+                clearColor.x,
+                clearColor.y,
+                clearColor.z,
                 1f,
             )
 
@@ -492,5 +496,10 @@ class RendererManager(
         synchronized(entityDestroy) {
             entityDestroy.add(element = entity)
         }
+    }
+
+    fun setClearColor(r: Float, g: Float, b: Float) {
+
+        clearColor.set(r, g, b)
     }
 }

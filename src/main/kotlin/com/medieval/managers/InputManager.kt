@@ -59,7 +59,7 @@ class InputManager(
 
     private fun windowsFocusCallback(window: Long, focused: Boolean) {
 
-        gm.logMessage(message = "Windows Focus Callback: focused -> $focused")
+        gm.logMessage(message = "LOCAL: INPUT_MANAGER -> \nWindows Focus Callback: focused -> $focused")
 
         //synchronized(clients) {}
         if (!focused) {
@@ -73,7 +73,7 @@ class InputManager(
 
     fun setCursorState(isEnabled: Boolean) {
 
-        gm.logMessage(message = "Setting Cursor State: state -> $isEnabled")
+        gm.logMessage(message = "LOCAL: INPUT_MANAGER -> \nSetting Cursor State: state -> $isEnabled")
 
         isCursorEnabled = isEnabled
 

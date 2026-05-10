@@ -41,6 +41,8 @@ class GameManager(
 
     fun logMessage(message: String) {
 
+        println("LOG_MESSAGE: $message")
+
         synchronized(logClients) {
             for (logClient in logClients) {
                 logClient.onLogMessage(timesTamp = glfwGetTime().toFloat(), message = message)

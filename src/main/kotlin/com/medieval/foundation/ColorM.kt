@@ -16,6 +16,11 @@ class ColorM(
         fun YELLOW(): ColorM = ColorM(255, 255, 0, 255)
         fun WHITE(): ColorM = ColorM(255, 255, 255, 255)
         fun TRANSPARENT(): ColorM = ColorM(0, 0, 0, 0)
+
+        val RED: ColorM
+            get() {
+                return ColorM(255, 0, 0, 255)
+            }
     }
 
     constructor(r: Float, g: Float, b: Float, a: Float)
