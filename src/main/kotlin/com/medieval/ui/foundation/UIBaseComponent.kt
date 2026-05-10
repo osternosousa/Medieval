@@ -225,7 +225,7 @@ abstract class UIBaseComponent(
             uiPositionSizeValuesLoc = PID.getUniformLocation(name = "uiPositionSizeValues")
             uiSliderValuesLoc = PID.getUniformLocation(name = "uiSliderValues")
 
-            gm.logMessage(message = PID.log)
+            gm.logMessage(message = "UI_BASE_COMPONENT -> \n${PID.log}")
         }
 
 //        PID.setUniformFloat("uSliderNormalizedValueX", sliderNormalizedValueX)
