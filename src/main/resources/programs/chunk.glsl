@@ -23,6 +23,20 @@ flat out float botRigBlock;
 uniform mat4 uPerspectiveMatrix;
 uniform mat4 uViewMatrix;
 
+layout(std140, binding = 0) uniform GlobalData {
+    mat4 viewMatrix;
+    mat4 projMatrix;
+    mat4 orthoMatrix;
+    mat4 modelMatrix;
+    vec3 ambientLight;              float pad0;
+    vec3 skyColor;                  float pad1;
+    vec2 screenResolution;          float pad2; float pad3;
+    float time;                     float pad4; float pad5; float pad6;
+    vec3 playerPosition;            float pad7;
+    float chunkDistanceInitFade;    float pad8; float pad9; float pad10;
+    float chunkDistanceEndFade;     float pad11; float pad12; float pad13;
+} globalData;
+
 void main() {
 
     int bits = floatBitsToInt(aTexIndex);
@@ -46,7 +60,8 @@ void main() {
     botLefBlock = float((bits >> 15) & 1);
     botRigBlock = float((bits >> 14) & 1);
 
-    gl_Position = uPerspectiveMatrix * uViewMatrix * vec4(vPos, 1.0);
+    //gl_Position = uPerspectiveMatrix * uViewMatrix * vec4(vPos, 1.0);
+    gl_Position = globalData.projMatrix * globalData.viewMatrix * vec4(vPos, 1.0);
 }
 //FRAGMENT_SHADER
 #version 450 core
@@ -71,13 +86,28 @@ out vec4 outFragColor;
 
 uniform sampler2DArray textureSampler;
 
-uniform float uAmbientLight;
+layout(std140, binding = 0) uniform GlobalData {
+    mat4 viewMatrix;
+    mat4 projMatrix;
+    mat4 orthoMatrix;
+    mat4 modelMatrix;
+    vec3 ambientLight;              float pad0;
+    vec3 skyColor;                  float pad1;
+    vec2 screenResolution;          float pad2; float pad3;
+    float time;                     float pad4; float pad5; float pad6;
+    vec3 playerPosition;            float pad7;
+    float chunkDistanceInitFade;    float pad8; float pad9; float pad10;
+    float chunkDistanceEndFade;     float pad11; float pad12; float pad13;
+} globalData;
 
 void main() {
 
     vec4 tex = texture(textureSampler, vec3(vUV, vTexIndex));
 
     if (tex.a < 0.1) discard;
+
+    float fragDistFromPlayer = distance(globalData.playerPosition.xz, vPos.xz);
+    if (fragDistFromPlayer > globalData.chunkDistanceEndFade) discard;
 
     // AMBIENT OCCLUSION
     // =============================================================
@@ -111,9 +141,13 @@ void main() {
 //    tex = tex - tex * botLefBlock * (1.0 - texture(textureSampler, vec3(vUV, 26.2))) * ambientOcclusionIntensity;
 //    tex = tex - tex * botRigBlock * (1.0 - texture(textureSampler, vec3(vUV, 27.0))) * ambientOcclusionIntensity;
 
-    tex.r *= uAmbientLight;
-    tex.g *= uAmbientLight;
-    tex.b *= uAmbientLight;
+    float fadeStep = smoothstep(globalData.chunkDistanceInitFade, globalData.chunkDistanceEndFade, fragDistFromPlayer);
 
-    outFragColor = tex;
+    vec3 finalColor = mix(
+        tex.rgb * globalData.ambientLight,
+        globalData.skyColor,
+        fadestep
+    );
+
+    outFragColor = vec4(finalColor, tex.a);
 }

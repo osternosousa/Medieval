@@ -8,7 +8,9 @@ import java.lang.Math.clamp
 
 class UISliderComponent(
     gm: GameManager,
-    text: String = "",
+    text: StringBuilder = StringBuilder(2000),
+    initialValueX: Float = 0f,
+    initialValueY: Float = 0f,
     x: Float = 5f,
     y: Float = 5f,
     width: Float = 250f,
@@ -74,6 +76,14 @@ class UISliderComponent(
 ) {
 
     override var uiPrimitiveType: UIPrimitiveType = UIPrimitiveType.UI_SLIDER_COMPONENT
+
+    init {
+        val maxValueX = (1 - sliderButtonWidth)
+        val maxValueY = (1 - sliderButtonHeight)
+
+        sliderNormalizedValueX = clamp(initialValueX, 0f, maxValueX)
+        sliderNormalizedValueY = clamp(initialValueY, 0f, maxValueY)
+    }
 
     override fun initEntity() {
 

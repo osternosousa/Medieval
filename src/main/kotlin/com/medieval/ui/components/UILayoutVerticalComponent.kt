@@ -80,7 +80,10 @@ class UILayoutVerticalComponent(
     override fun createUpdateBackgroundAndGlyphMesh() {
 
         if (imagePath.isNotEmpty()) imagePath = ""
-        if (text.isNotEmpty()) text = ""
+        if (text.isNotEmpty()) {
+            //text = ""
+            text.clear()
+        }
 
         updateComponentsSizePosition()
 
@@ -100,7 +103,7 @@ class UILayoutVerticalComponent(
 }
 
 fun UILayoutVerticalComponent.uiButtonComponent(
-    text: String = "",
+    text: StringBuilder = StringBuilder(2000),
     //x: Float = 5f,    // Will be set by the layout
     //y: Float = 5f,   // Will be set by the layout
     //width: Float = 250f,   // Will be set by the layout
@@ -172,7 +175,7 @@ fun UILayoutVerticalComponent.uiButtonComponent(
 }
 
 fun UILayoutVerticalComponent.uiCheckBoxComponent(
-    text: String = "",
+    text: StringBuilder = StringBuilder(2000) ,
     //x: Float = 5f,    // Will be set by the layout
     //y: Float = 5f,    // Will be set by the layout
     //width: Float = 250f,  // Will be set by the layout
@@ -354,7 +357,9 @@ fun UILayoutVerticalComponent.uiImageComponent(
 }
 
 fun UILayoutVerticalComponent.uiSliderComponent(
-    text: String = "",
+    text: StringBuilder = StringBuilder(2000),
+    initialValueX: Float = 0f,
+    initialValueY: Float = 0f,
     //x = x,    // Will be set by the layout
     //y = y,    // Will be set by the layout
     //width = width,    // Will be set by the layout
@@ -390,6 +395,8 @@ fun UILayoutVerticalComponent.uiSliderComponent(
     val sliderComponent = UISliderComponent(
         gm = this.gm,
         text = text,
+        initialValueX = initialValueX,
+        initialValueY = initialValueY,
         //x = x,    // Will be set by the layout
         //y = y,    // Will be set by the layout
         //width = width,    // Will be set by the layout
@@ -443,7 +450,7 @@ fun UILayoutVerticalComponent.uiSpacerComponent(
 }
 
 fun UILayoutVerticalComponent.uiTextFieldComponent(
-    text: String = "",
+    text: StringBuilder = StringBuilder(2000),
     //x: Float = 5f,    //Will be set by the layout
     //y: Float = 5f,    //Will be set by the layout
     //width: Float = 250f,  //Will be set by the layout

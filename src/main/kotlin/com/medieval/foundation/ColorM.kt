@@ -11,6 +11,8 @@ class ColorM(
         fun BLACK(): ColorM = ColorM(0, 0, 0, 255)
         fun BLUE(): ColorM = ColorM(0, 0, 255, 255)
         fun LIGHT_GRAY(): ColorM = ColorM(192, 192, 192, 255)
+        fun MEDIUM_GRAY(): ColorM = ColorM(128, 128, 128, 255)
+        fun DARK_GRAY(): ColorM = ColorM(64, 64, 64, 255)
         fun RED(): ColorM = ColorM(255, 0, 0, 255)
         fun GREEN(): ColorM = ColorM(0, 255, 0, 255)
         fun YELLOW(): ColorM = ColorM(255, 255, 0, 255)

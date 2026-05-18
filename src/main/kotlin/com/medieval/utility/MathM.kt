@@ -33,17 +33,17 @@ object MathM {
     fun Double.fromDegreeToRadians() = this * DEGREES_TO_RADIANS
 }
 
-fun Double.decimalStringFormat(digits: Int = 2): String {
+fun Double.decimalFormat(digits: Int = 2): Float {
     val factor = 10.0.pow(digits).toFloat()
     val rounded = (this * factor).toInt() / factor
-    return rounded.toString()
+    return rounded
 //return String.format("%.${digits}f", this)
 }
 
-fun Float.decimalStringFormat(digits: Int = 2): String {
+fun Float.decimalFormat(digits: Int = 2): Float {
     val factor = 10.0.pow(digits).toFloat()
     val rounded = (this * factor).toInt() / factor
-    return rounded.toString()
+    return rounded
 //return String.format("%.${digits}f", this)
 }
 

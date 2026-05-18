@@ -1,5 +1,6 @@
 package com.medieval.managers
 
+import com.medieval.components.Chunk
 import com.medieval.foundation.Entity
 import com.medieval.ui.foundation.UIBaseComponent
 import org.joml.Vector3f
@@ -294,6 +295,19 @@ class RendererManager(
 
             glfwPollEvents()
 
+            if (!gm.inputManager.getCursorState()) timeCounter += deltaTime
+
+            // UPDATE UNIFORM BUFFER AFTER UDPATE, BECAUSE ENTITIES MAY HAVE CHANGE
+            // SOME OF ITS VALUES.
+            gm.globalData.setViewMatrix(matrix = gm.cameraManager.viewMatrix)
+            gm.globalData.setProjMatrix(matrix = gm.cameraManager.perspectiveMatrix)
+            gm.globalData.setAmbientLight(vector = gm.timeWeatherManager.ambientLight)
+            gm.globalData.setSkyColor(vector = gm.timeWeatherManager.skyColor)
+            gm.globalData.setTime(value = timeCounter)
+            gm.globalData.setPlayerPosition(vector = gm.playerManager.eyePosition)
+            gm.globalData.setChunkDistanceInitFade(value = Chunk.CHUNK_DISTANCE_INIT_FADE)
+            gm.globalData.setChunkDistanceEndFade(value = Chunk.CHUNK_DISTANCE_END_FADE)
+
             FPS++
 
             // Set the clear color
@@ -306,15 +320,19 @@ class RendererManager(
 
             glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT) // clear the framebuffer
 
+            // UPDATE AND DRAWING
+            // ================================================================
+            initSleep()
             initStates()
-
+            //
             destroyEntities()
             initEntities()
-
+            //
             updateEntities(dt = deltaTime)
             drawEntities(dt = deltaTime)
-
+            //
             clearStates()
+            // ================================================================
 
             val endTime = glfwGetTime()
 
@@ -338,6 +356,15 @@ class RendererManager(
         // Terminate GLFW and free the error callback
         glfwTerminate()
         glfwSetErrorCallback(null)?.free()
+    }
+
+    fun initSleep() {
+        synchronized(entitySleep) {
+            for (entity in entitySleep) {
+                entity.sleep()
+            }
+            entitySleep.clear()
+        }
     }
 
     fun initStates() {
@@ -501,5 +528,11 @@ class RendererManager(
     fun setClearColor(r: Float, g: Float, b: Float) {
 
         clearColor.set(r, g, b)
+    }
+
+    fun subscribeEntitySleeping(entity: Entity) {
+        synchronized(entitySleep) {
+            entitySleep.add(element = entity)
+        }
     }
 }

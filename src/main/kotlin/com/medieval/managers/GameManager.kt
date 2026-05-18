@@ -1,6 +1,8 @@
 package com.medieval.managers
 
+import com.medieval.components.MainAxis
 import com.medieval.foundation.LogManager
+import org.joml.Vector2f
 import org.lwjgl.glfw.GLFW.glfwGetTime
 
 class GameManager(
@@ -26,6 +28,7 @@ class GameManager(
     val playerManager: PlayerManager = PlayerManager(gm = this)
     val mainAxis: MainAxis = MainAxis(gm = this)
     val chunkManager: ChunkManager = ChunkManager(gm = this)
+    val globalData: UniformBufferManager = UniformBufferManager(gm = this, bindingPointNumber = resourcesManager.BINDING_POINT_GLOBAL_DATA)
 
     private val logClients: MutableList<LogManager> = mutableListOf()
 
@@ -60,6 +63,11 @@ class GameManager(
         terrainManager.initManager()
         timeWeatherManager.initManager()
         chunkManager.initManager()
+
+        globalData.init()
+        globalData.setScreenResolution(vector = Vector2f(width.toFloat(), height.toFloat()))
+        globalData.setProjMatrix(matrix = cameraManager.perspectiveMatrix)
+        globalData.setOrthoMatrix(matrix = cameraManager.orthographicMatrix)
 
         block()
     }

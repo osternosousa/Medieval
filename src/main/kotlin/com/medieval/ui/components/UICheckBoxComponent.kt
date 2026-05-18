@@ -7,7 +7,7 @@ import com.medieval.ui.foundation.UIBaseComponent
 
 class UICheckBoxComponent(
     gm: GameManager,
-    text: String = "",
+    text: StringBuilder = StringBuilder(2000),
     x: Float = 5f,
     y: Float = 5f,
     width: Float = 250f,

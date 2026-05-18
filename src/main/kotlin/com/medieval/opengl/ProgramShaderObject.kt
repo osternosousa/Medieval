@@ -3,6 +3,8 @@ package com.medieval.opengl
 import org.joml.Matrix4f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL20
+import org.lwjgl.opengl.GL31.glGetUniformBlockIndex
+import org.lwjgl.opengl.GL31.glUniformBlockBinding
 import java.nio.FloatBuffer
 
 class ProgramShaderObject {
@@ -88,6 +90,16 @@ class ProgramShaderObject {
         val loc = GL20.glGetUniformLocation(PID_ID, name)
         UNIFORMS_LOCATIONS[name] = loc
         return loc
+    }
+
+    fun getUniformBlockLocationByName(name: String): Int {
+
+        return glGetUniformBlockIndex(PID_ID, name)
+    }
+
+    fun performProgramUniformBlockBindingUBO(uniformLocation: Int, bindingPointNumber: Int) {
+
+        glUniformBlockBinding(PID_ID, uniformLocation, bindingPointNumber)
     }
 
     fun setUniformFloat(location: Int, value: Float) {

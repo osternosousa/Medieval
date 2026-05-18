@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW
 
 abstract class UIBaseComponent(
     val gm: GameManager,
-    var text: String = "",
+    val text: StringBuilder = StringBuilder(2000),
     var imagePath: String = "",
     var x: Float = 5f,
     var y: Float = 5f,
@@ -141,11 +141,11 @@ abstract class UIBaseComponent(
 
     override fun update(dt: Float) {
 
-        onUpdate(this, dt);
+        onUpdate(this, dt)
 
         if(hasToPerformUpdate) {
 
-            createUpdateBackgroundAndGlyphMesh();
+            createUpdateBackgroundAndGlyphMesh()
 
             VAO.bind()
 
@@ -252,7 +252,7 @@ abstract class UIBaseComponent(
 
     open fun createUpdateBackgroundAndGlyphMesh() {
 
-        val charList = text.toList()
+        val charList = text
         var breakLineCount = 0
 
         for (char in charList) {
@@ -265,7 +265,7 @@ abstract class UIBaseComponent(
 
         // One or two more, because the first one (0 - zero index) will render background.
         // The second one will be to render image.
-        val verticesBufferSize = charList.size + backgroundAndImageCount - breakLineCount
+        val verticesBufferSize = charList.length + backgroundAndImageCount - breakLineCount
 
         vertices = FloatArray(verticesBufferSize * baseVertices.size)
         indices = IntArray(verticesBufferSize * baseIndices.size)
@@ -421,7 +421,7 @@ abstract class UIBaseComponent(
                 cursorX = 0.0f
                 cursorY++
 
-                while (pos < charList.size && charList[pos].code != 10) {
+                while (pos < charList.length && charList[pos].code != 10) {
                     lineWidth += glyphWidth + letterSpacing
                     pos++
                 }

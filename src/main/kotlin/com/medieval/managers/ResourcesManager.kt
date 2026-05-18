@@ -5,7 +5,9 @@ import org.lwjgl.opengl.GL11.GL_LINEAR
 import org.lwjgl.opengl.GL11.GL_NEAREST
 import org.lwjgl.opengl.GL13
 
-class ResourcesManager(val gm: GameManager) {
+class ResourcesManager(
+    val gm: GameManager
+) {
 
     var TBO_0_2D_ARRAY_TILES_ARRAY_TEXTURE_UNIT: Int = GL13.GL_TEXTURE0
     var TBO_0_2D_ARRAY_TILES_ARRAY_SAMPLER_VALUE: Int = 0

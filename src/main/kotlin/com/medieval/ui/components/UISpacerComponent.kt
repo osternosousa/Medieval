@@ -31,7 +31,7 @@ class UISpacerComponent(
     override fun createUpdateBackgroundAndGlyphMesh() {
 
         if (imagePath.isNotEmpty()) imagePath = ""
-        if (text.isNotEmpty()) text = ""
+        if (text.isNotEmpty()) text.clear()
 
         super.createUpdateBackgroundAndGlyphMesh()
     }

@@ -70,7 +70,7 @@ class UIImageComponent(
 
         // Como se trata de um simples botão, não iremos permitir renderização de imagem.
         // A inclusão de imagem no mesh ocorre apenas quando o imagePath é não-vazio.
-        if (text.isNotEmpty()) text = ""
+        if (text.isNotEmpty()) text.clear()
 
         super.createUpdateBackgroundAndGlyphMesh()
     }

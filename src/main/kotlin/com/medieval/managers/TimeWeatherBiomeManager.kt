@@ -8,7 +8,7 @@ class TimeWeatherBiomeManager(
 
     val skyColor: Vector3f = Vector3f(0.3f, 0.5f, 0.8f)
     val dayLight: Vector3f = Vector3f(1.0f, 1.0f, 1.0f)
-    var ambientLight: Float = 0.8f
+    var ambientLight: Vector3f = Vector3f(0.8f)
 
     fun initManager() {
 

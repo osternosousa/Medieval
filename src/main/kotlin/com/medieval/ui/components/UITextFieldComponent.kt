@@ -13,7 +13,7 @@ import org.lwjgl.glfw.GLFW.GLFW_KEY_TAB
 
 open class UITextFieldComponent(
     gm: GameManager,
-    text: String = "",
+    text: StringBuilder = StringBuilder(2000),
     x: Float = 5f,
     y: Float = 5f,
     width: Float = 250f,
@@ -91,7 +91,8 @@ open class UITextFieldComponent(
 
             } else if (gm.inputManager.isKeyTyped(GLFW_KEY_ENTER)) {
 
-                text += '\n'
+                //text += '\n'
+                text.append('\n')
                 scheduleComponentUpdate()
             } else if (gm.inputManager.isKeyTyped(GLFW_KEY_TAB)) {
 
@@ -103,12 +104,18 @@ open class UITextFieldComponent(
 
                     backspaceCount = 0f;
 
-                    if (!text.isEmpty()) text = text.substring(0, text.length - 1)
+                    if (!text.isEmpty()) {
+                        text.deleteCharAt(text.length - 1)
+                        //text = text.substring(0, text.length - 1)
+                    }
                     scheduleComponentUpdate()
                 }
             } else if (gm.inputManager.isKeyTyped(GLFW_KEY_BACKSPACE)) {
 
-                if (!text.isEmpty()) text = text.substring(0, text.length - 1)
+                if (!text.isEmpty()) {
+                    text.deleteCharAt(text.length - 1)
+                    //text = text.substring(0, text.length - 1)
+                }
                 scheduleComponentUpdate()
             } else if (gm.inputManager.isKeyTyped(GLFW_KEY_INSERT)) {
 
@@ -136,7 +143,8 @@ open class UITextFieldComponent(
     override fun onComponentTyping(scancode: Int) {
         //super.onComponentTyping(scancode)
 
-        text += scancode.toChar()
+        text.append(scancode.toChar())
+        //text += scancode.toChar()
         scheduleComponentUpdate()
 
         onTyping(this, scancode)
