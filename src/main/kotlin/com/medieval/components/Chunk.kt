@@ -14,10 +14,8 @@ import org.joml.Vector3f
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_BLEND
-import org.lwjgl.opengl.GL11.GL_FLOAT
 import org.lwjgl.opengl.GL11.glDisable
 import org.lwjgl.opengl.GL11.glEnable
-import org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
@@ -49,12 +47,8 @@ class Chunk(
 
         private var shaderSourceFilePath: String = "programs/chunk.glsl"
         private var PID_CHUNK: ProgramShaderObject = ProgramShaderObject()
-        private var indicesComponents: IntArray = intArrayOf(2, 4, 2, 1, 1)
-        private var type: Int = GL11.GL_FLOAT
-
-        private var uPerspectiveMatrixLoc: Int = -1
-        private var uViewMatrixLoc: Int = -1
-        private var uAmbientLightLoc: Int = -1
+        private val ATTRIBUTES_INDICES_COMPONENTS: IntArray = intArrayOf(3, 3, 2, 1)
+        private const val ATTRIBUTES_TYPE: Int = GL11.GL_FLOAT
     }
 
     // Must be set on when xyz chunck position is set. And must
@@ -202,10 +196,6 @@ class Chunk(
             value = gm.resourcesManager.TBO_0_2D_ARRAY_TILES_ARRAY_SAMPLER_VALUE
         )
 
-//        uPerspectiveMatrixLoc = PID_CHUNK.getUniformLocation(name = "uPerspectiveMatrix")
-//        uViewMatrixLoc = PID_CHUNK.getUniformLocation(name = "uViewMatrix")
-//        uAmbientLightLoc = PID_CHUNK.getUniformLocation(name = "uAmbientLight")
-
         val globalDataLoc = PID_CHUNK.getUniformBlockLocationByName(name = "GlobalData")
 
         PID_CHUNK.performProgramUniformBlockBindingUBO(
@@ -227,22 +217,18 @@ class Chunk(
 
             VBO_0_OPAQUE.init()
             VBO_0_OPAQUE.bind()
-            //VBO_0_OPAQUE.bufferData(data = verticesOpaque)
 
             EBO_0_OPAQUE.init()
             EBO_0_OPAQUE.bind()
-            //EBO_0_OPAQUE.bufferData(data = indicesOpaque)
 
             VAO_0_OPAQUE.enableAndSetAllVertexAttributes(
-                indicesComponents = intArrayOf(3, 3, 2, 1),
-                type = GL_FLOAT
+                indicesComponents = ATTRIBUTES_INDICES_COMPONENTS,
+                type = ATTRIBUTES_TYPE
             )
 
             VAO_0_OPAQUE.unbind()
             VBO_0_OPAQUE.unbind()
             EBO_0_OPAQUE.unbind()
-
-            //isAvailableToDraw = true
         }
 
         if (VAO_0_TRANSPARENT.VAO_ID == -1) {
@@ -252,27 +238,20 @@ class Chunk(
 
             VBO_0_TRANSPARENT.init()
             VBO_0_TRANSPARENT.bind()
-            //VBO_0_TRANSPARENT.bufferData(data = verticesTransparent)
 
             EBO_0_TRANSPARENT.init()
             EBO_0_TRANSPARENT.bind()
-            //EBO_0_TRANSPARENT.bufferData(data = indicesTransparent)
 
-            VAO_0_TRANSPARENT.enableAndSetAllVertexAttributes(indicesComponents = intArrayOf(3, 3, 2, 1), type = GL_FLOAT)
+            VAO_0_TRANSPARENT.enableAndSetAllVertexAttributes(
+                indicesComponents = ATTRIBUTES_INDICES_COMPONENTS,
+                type = ATTRIBUTES_TYPE
+            )
 
             VAO_0_TRANSPARENT.unbind()
             VBO_0_TRANSPARENT.unbind()
             EBO_0_TRANSPARENT.unbind()
 
-            //isAvailableToDraw = true
         }
-
-//        verticesOpaque = EMPTY_FLOAT_BUFFER
-//        indicesOpaque = EMPTY_INT_BUFFER
-//        verticesTransparent = EMPTY_FLOAT_BUFFER
-//        indicesTransparent = EMPTY_INT_BUFFER
-
-        //gm.rendererManager.subscribeEntityChunk(entity = this)
 
         gm.logMessage(message = "Chunk InitEntity ended! -> [z: $initZ, x: $initX, y: $initY]")
     }
@@ -858,9 +837,6 @@ class Chunk(
         VAO_0_OPAQUE.bind()
         PID_CHUNK.bindUseProgram()
 
-//        PID_CHUNK.setUniformMatrix4f(uPerspectiveMatrixLoc, gm.cameraManager.perspectiveMatrix)
-//        PID_CHUNK.setUniformMatrix4f(uViewMatrixLoc, gm.cameraManager.viewMatrix)
-
         EBO_0_OPAQUE.drawElementsTriangles()
     }
 
@@ -870,15 +846,6 @@ class Chunk(
 
         VAO_0_TRANSPARENT.bind()
         PID_CHUNK.bindUseProgram()
-
-//        PID_CHUNK.setUniformMatrix4f(uPerspectiveMatrixLoc, gm.cameraManager.perspectiveMatrix)
-//        PID_CHUNK.setUniformMatrix4f(uViewMatrixLoc, gm.cameraManager.viewMatrix)
-//        PID_CHUNK.setUniformVector3f(
-//            uAmbientLightLoc,
-//            gm.timeWeatherManager.ambientLight.x,
-//            gm.timeWeatherManager.ambientLight.y,
-//            gm.timeWeatherManager.ambientLight.z,
-//        )
 
         glEnable(GL_BLEND)
 

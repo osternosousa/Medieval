@@ -11,7 +11,7 @@ class CameraManager(
     val orthographicMatrix: Matrix4f = Matrix4f()
     val viewMatrix: Matrix4f = Matrix4f()
 
-    var fov: Float = 90f
+    var fov: Float = Math.toRadians(85.0).toFloat()
     var ratio: Float = 1f
     var zNear: Float = 0.1f
     var zFar: Float = 10000f

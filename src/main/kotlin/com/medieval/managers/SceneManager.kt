@@ -55,6 +55,16 @@ class SceneManager(
                 }
             ).text.append("Rendering Metrics")
 
+            uiTextFieldComponent(
+                textPosition = TextPosition.TOP_LEFT,
+                textSize = 7f,
+                height = 100f,
+
+            ).text.append("COMMANDS:\n")
+                .append("=============================================\n")
+                .append("CTRL+1 -> Enable/Disable FreeFlaying\n")
+                .append("CTRL+2 -> undefined\n")
+
         }.isDraggable = true
 
         UILayoutVerticalComponent(gm = gm, x = gm.width - 405f, y = 5f, width = 400f) {
@@ -226,6 +236,7 @@ class SceneManager(
             gm.playerManager.eyePosition.x = playerPositionX.toFloat()
             gm.playerManager.eyePosition.y = playerPositionY.toFloat()
             gm.playerManager.eyePosition.z = playerPositionZ.toFloat()
+            gm.playerManager.isFreeFlying = true
 
             gm.inputManager.subscribeClient(client = gm.playerManager)
             gm.rendererManager.subscribeEntityGeneric(entity = gm.playerManager)
@@ -245,6 +256,8 @@ class SceneManager(
 
             gm.rendererManager.subscribeEntityInitClearStates(entity = gm.terrainManager)
             gm.rendererManager.subscribeEntityGeneric(entity = gm.chunkManager)
+
+            gm.playerManager.isFreeFlying = false
         }
     }
 }

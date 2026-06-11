@@ -1,5 +1,7 @@
 package com.medieval.foundation
 
+/** Classes that implement this interface can be subscribed to the InputManager in order
+ * to receive input events from mouse and keypad. */
 interface InputManagerClient {
 
     fun onMove(deltaX: Double, deltaY: Double, posX: Double, posY: Double, isCursorEnabled: Boolean)

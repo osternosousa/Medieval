@@ -146,7 +146,7 @@ void main() {
     vec3 finalColor = mix(
         tex.rgb * globalData.ambientLight,
         globalData.skyColor,
-        fadestep
+        fadeStep
     );
 
     outFragColor = vec4(finalColor, tex.a);
