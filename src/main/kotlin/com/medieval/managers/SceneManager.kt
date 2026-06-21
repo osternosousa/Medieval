@@ -19,12 +19,14 @@ class SceneManager(
 ) {
 
     companion object {
+        private const val TEXT_BREAK_LINE: Char = '\n'
         private const val TEXT_TITLE: String = "RENDERING METRICS"
         private const val TEXT_DIVIDER: String = "============================================="
         private const val TEXT_FPS_NOW: String = "FPS -> NOW: "
         private const val TEXT_FPS_MAX: String = " | MAX: "
         private const val TEXT_AVERAGE_FPS: String = " | AVR: "
         private const val TEXT_POSITION: String = "POSITION: "
+        private const val TEXT_IS_UNDER_WATER: String = "IS_UNDER_WATER: "
     }
     val sb: StringBuilder = StringBuilder(2000)
 
@@ -184,13 +186,16 @@ class SceneManager(
         sb.append(gm.rendererManager.FPS_MAX)
         sb.append(TEXT_AVERAGE_FPS)
         sb.append(gm.rendererManager.averageFPS.decimalFormat())
-        sb.append('\n')
+        sb.append(TEXT_BREAK_LINE)
         sb.append(TEXT_POSITION)
         sb.append(gm.playerManager.eyePosition.x.decimalFormat())
         sb.append(", ")
         sb.append(gm.playerManager.eyePosition.y.decimalFormat())
         sb.append(", ")
         sb.append(gm.playerManager.eyePosition.z.decimalFormat())
+        sb.append(TEXT_BREAK_LINE)
+        sb.append(TEXT_IS_UNDER_WATER)
+        sb.append(gm.playerManager.isUnderWater)
     }
 
     private fun formatSliderSkyColor(ui: UIBaseComponent, text: String, value: Float) {

@@ -156,8 +156,6 @@ class TerrainManager(
         val noiseMapTerrain: Array<FloatArray> = getNoiseMap(posX = posX, posZ = posZ, frequency = 1f)
         val timeNoiseMapEnd = glfwGetTime()
 
-        val noiseMapErosion: Array<FloatArray> = getNoiseMap(posX = posX + 1024, posZ = posZ + 1024, frequency = 0.5f)
-
         gm.logMessage(message = "NOISE_MAP_TIME: ${(timeNoiseMapEnd - timeNoiseMapInit).decimalFormat()}")
 
         val noiseMapVegetation = getNoiseMap(posX = posX, posZ = posZ, frequency = 15f)
@@ -165,32 +163,29 @@ class TerrainManager(
         for (z in 0..< BLOCK_MAP_LENGTH) {
             for (x in 0..< BLOCK_MAP_WIDTH) {
 
-                val erosion: Float = noiseMapErosion[z][x]
                 val maxHeight: Int = (noiseMapTerrain[z][x] * (BLOCK_MAP_HEIGHT - 1)).toInt()
-                //val maxHeight: Int = (noiseMapTerrain[z][x] * erosion * (BLOCK_MAP_HEIGHT - 1)).toInt()
-                var block: Short = 5
 
-                for (y in 0.. maxHeight) {
+                // Abaixo desta altura ficam blocos de dirt.
+                val dirtyHeight: Int = (maxHeight * 0.9f).toInt()
 
-                    // Abaixo desta altura ficam blocos de dirt.
-                    val dirtyHeight: Int = (maxHeight * 0.9f).toInt()
+                for (y in 0..< BLOCK_MAP_HEIGHT) {
 
-                    if (maxHeight < 100 && y > maxHeight) {
-                        block = 4
-                    } else if (y < dirtyHeight) {
-                        block = 2   // Rock block.
-                    } else if (y in dirtyHeight..< maxHeight ){
-                        block = 0   // Dirt block.
-                    } else {
-                        block = 1   // Grass block.
-                    }
+                    var block: Int = BlockManager.BLOCK_005_AIR.ordinal   // Air block.
 
-                    blockMap[z][x][y] = block
+                    if (y <= maxHeight) block = BlockManager.BLOCK_002_ROCK_TERRAIN.ordinal    // Rock block.
+
+                    if (maxHeight < 100 && y > maxHeight && y < 100) block = BlockManager.BLOCK_004_WATER_SURFACE.ordinal
+
+                    if (block != BlockManager.BLOCK_005_AIR.ordinal) blockMap[z][x][y] = block.toShort()
                 }
 
                 if (maxHeight < 100) {
-                    blockMap[z][x][100] = 4
-                    blockMap[z][x][maxHeight] = 3
+
+                    blockMap[z][x][100] = BlockManager.BLOCK_004_WATER_SURFACE.ordinal.toShort()
+                    blockMap[z][x][maxHeight] = BlockManager.BLOCK_003_SAND_TERRAIN.ordinal.toShort()
+                } else if (maxHeight > 100) {
+
+                    blockMap[z][x][maxHeight] = BlockManager.BLOCK_001_GRASS_TERRAIN.ordinal.toShort()
                 }
 
                 includeVegetation(blockMap = blockMap, noiseMapVegetation = noiseMapVegetation, x = x, y = maxHeight, z = z)

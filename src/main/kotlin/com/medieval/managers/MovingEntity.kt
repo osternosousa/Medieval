@@ -21,12 +21,14 @@ interface MovingEntity {
 
     var isRunning: Boolean
     var isJumping: Boolean
+    var isUnderWater: Boolean
     var isFreeFlying: Boolean
 
     var runSpeed: Float
     var walkSpeed: Float
     var runWalkSpeedDelayMaxValue: Float
     var runWalkSpeedDelayCounter: Float
+    var dragSpeed: Float
 
     var anglePlaneXZ: Double
     var anglePlaneYZ: Double
@@ -63,6 +65,33 @@ interface MovingEntity {
             }
         }
 
+        fun checkWater(gm: GameManager, movingEntity: PlayerManager) {
+
+            var posZ = movingEntity.eyePosition.z
+            var posX = movingEntity.eyePosition.x
+            val posY = (movingEntity.eyePosition.y - movingEntity.collisionHeight/2f).toInt()
+
+            // Ajustando localização para conseguir a posição no block map.
+            if (posZ < 0) posZ = ((posZ - 0.5f).toInt().toFloat()) else posZ = ((posZ + 0.5f).toInt().toFloat())
+            if (posX < 0) posX = ((posX - 0.5f).toInt().toFloat()) else posX = ((posX + 0.5f).toInt().toFloat())
+
+            val blockId0: Int =  gm.terrainManager.getBlockId(x = posX.toInt(), y = posY + 0, z = posZ.toInt())
+            val blockId1: Int =  gm.terrainManager.getBlockId(x = posX.toInt(), y = posY + 1, z = posZ.toInt())
+            val blockId2: Int =  gm.terrainManager.getBlockId(x = posX.toInt(), y = posY + 2, z = posZ.toInt())
+
+            if (   blockId0 == BlockManager.BLOCK_004_WATER_SURFACE.ordinal
+                || blockId1 == BlockManager.BLOCK_004_WATER_SURFACE.ordinal
+                || blockId2 == BlockManager.BLOCK_004_WATER_SURFACE.ordinal) {
+
+                movingEntity.isUnderWater = true
+                movingEntity.dragSpeed = 0.35f
+            } else {
+
+                movingEntity.isUnderWater = false
+                movingEntity.dragSpeed = 1.0f
+            }
+        }
+
         fun performJump(gm: GameManager, movingEntity: MovingEntity, deltaTime: Float) {
 
             if (movingEntity.isFreeFlying || !movingEntity.isJumping) return
@@ -71,13 +100,20 @@ interface MovingEntity {
             // e caso não esteja no chaõ (isBottomBlocked), não realiza pulo e retorna.
             if (movingEntity.jumpCounter == 0f) {
 
-                movingEntity.eyePosition.y -= 0.001f
+                if (movingEntity.isUnderWater) {
 
-                if (!isBottomBlocked(gm = gm, movingEntity = movingEntity)) {
+                } else {
+
+                    movingEntity.eyePosition.y -= 0.001f
+
+                    if (!isBottomBlocked(gm = gm, movingEntity = movingEntity)) {
+
+                        movingEntity.eyePosition.y += 0.001f
+                        movingEntity.isJumping = false
+                        return
+                    }
 
                     movingEntity.eyePosition.y += 0.001f
-                    movingEntity.isJumping = false
-                    return
                 }
             }
 
@@ -87,12 +123,12 @@ interface MovingEntity {
 
             val tempY = movingEntity.eyePosition.y
 
-            val heightInit: Float = -(movingEntity.jumpCounter * 1.50f - 1.1f).pow(4) + 1.464f
+            var heightInit: Float = -(movingEntity.jumpCounter * 1.50f - 1.1f).pow(4) + 1.464f
 
-            movingEntity.jumpCounter += deltaTime
+            movingEntity.jumpCounter += deltaTime * movingEntity.dragSpeed
 
             //val heightEnd: Float = -(movingEntity.jumpCounter * 0.8f - 1f).pow(4) + 1f
-            val heightEnd: Float = -(movingEntity.jumpCounter * 1.50f - 1.1f).pow(4) + 1.464f
+            var heightEnd: Float = -(movingEntity.jumpCounter * 1.50f - 1.1f).pow(4) + 1.464f
 
             movingEntity.eyePosition.y = movingEntity.jumpInitialPositionY + heightEnd
             movingEntity.centerTarget.y = movingEntity.centerTarget.y + heightEnd - heightInit
@@ -119,23 +155,18 @@ interface MovingEntity {
 
         fun performFall(gm: GameManager, movingEntity: MovingEntity, deltaTime: Float) {
 
-            //println("Height: ${movingEntity.collisionHeight}")
-
             if (movingEntity.isFreeFlying || movingEntity.isJumping) return
 
             if (movingEntity.fallCounter == 0f) movingEntity.fallInitialPositionY = movingEntity.eyePosition.y
 
-            val tempPositionY = movingEntity.eyePosition.y
             val tempTargetY = movingEntity.centerTarget.y
 
-            val heightInit: Float = (movingEntity.fallCounter * 2.5f).pow(3)
+            movingEntity.fallCounter += deltaTime * movingEntity.dragSpeed
 
-            movingEntity.fallCounter += deltaTime
+            val fall: Float = (movingEntity.fallCounter * 0.6f).pow(3)
 
-            val heightEnd: Float = (movingEntity.fallCounter * 2.5f).pow(3)
-
-            movingEntity.eyePosition.y = movingEntity.fallInitialPositionY - heightEnd
-            movingEntity.centerTarget.y -= (heightEnd - heightInit)
+            movingEntity.eyePosition.y -= fall
+            movingEntity.centerTarget.y -= fall
 
             // Bloqueio pelo terreno estático.
             if (isBottomBlocked(gm = gm, movingEntity = movingEntity)) {
@@ -154,7 +185,7 @@ interface MovingEntity {
 
         fun performSideMovement(gm: GameManager, movingEntity: PlayerManager, deltaTime: Float) {
 
-            if (!movingEntity.isJumping && movingEntity.fallCounter == 0f) movingEntity.jumpingAnglePlaneXZ = movingEntity.anglePlaneXZ
+            if ((!movingEntity.isJumping || movingEntity.isUnderWater) && movingEntity.fallCounter == 0f) movingEntity.jumpingAnglePlaneXZ = movingEntity.anglePlaneXZ
 
             val sinPlaneXZJumping = sin(Math.toRadians(movingEntity.jumpingAnglePlaneXZ)).toFloat()
             val cosPlaneXZJumping = cos(Math.toRadians(movingEntity.jumpingAnglePlaneXZ)).toFloat()
@@ -184,7 +215,7 @@ interface MovingEntity {
                 movingEntity.runWalkSpeedDelayCounter = 0f
             }
 
-            val finalSpeed: Float = tempSpeedWalk * runWalkSpeedDelayTemp * deltaTime
+            val finalSpeed: Float = tempSpeedWalk * runWalkSpeedDelayTemp * deltaTime * movingEntity.dragSpeed
 
             /**
             sin(𝜃 + 180) = −sin(𝜃)      cos(𝜃 + 180) = −cos(𝜃)
@@ -386,7 +417,8 @@ interface MovingEntity {
             // Verifica a colisão caso o bloco seja sólido (colidível)
             if (BlockManager.solidBlocks.contains(element = blockId)) {
                 // Coleta as dimensões da collision bounds do bloco padrão a patir de block: Short.
-                val collisionBounds: CubeM = BlockManager.entries[blockId.toInt()].block.collisionBounds
+                val blockIdToInt: Int = blockId.toInt()
+                val collisionBounds: CubeM = BlockManager.entries[blockIdToInt].block.collisionBounds
                 // Posição de bounds retorna para a posição real no mundo. Até aqui xyz indicaram a posição
                 // do bloco no block map no intervalo 0..1023. Para collisionBounds, xyz devem considerar a
                 // posição real do objecto no espaço, logo, devemos devolver os valores de localização do

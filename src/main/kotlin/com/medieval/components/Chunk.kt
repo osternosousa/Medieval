@@ -325,10 +325,14 @@ class Chunk(
 
         // Coletando informações da quantidade de vértices e índices.
         for (row in 0..< CHUNK_LENGTH) {
-            for (col in 0..<CHUNK_WIDTH) {
-                for (top in 0..<CHUNK_HEIGHT) {
+            for (col in 0..< CHUNK_WIDTH) {
+                for (top in 0..< CHUNK_HEIGHT) {
 
                     val blockId: Int = gm.terrainManager.getBlockId(initX + col, initY + top, initZ + row)
+
+                    // Não exibe os blocos de água quando y abaixo de 100, pois somente a superfície será
+                    // exibida.
+                    if (blockId == BlockManager.BLOCK_004_WATER_SURFACE.ordinal && top < 100) continue
 
                     if (blockId != 5) {
 
@@ -414,7 +418,9 @@ class Chunk(
 
                     val blockId: Int = gm.terrainManager.getBlockId(initX + col, top, initZ + row)
 
-                    //if (distanceFromPlayer > 96 && vegetation.contains(blockId.toShort())) continue
+                    // Não exibe os blocos de água quando y abaixo de 100, pois somente a superfície será
+                    // exibida.
+                    if (blockId == BlockManager.BLOCK_004_WATER_SURFACE.ordinal && top < 100) continue
 
                     if (blockId != 5) {
 
@@ -427,6 +433,7 @@ class Chunk(
                             if (blockFactory.isSimpleCube) {
 
                                 facesVisibility.fill(element = false)
+
                                 checkFacesVisibility(
                                     resultHolder = facesVisibility,
                                     x = col + initX,

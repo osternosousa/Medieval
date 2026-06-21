@@ -31,12 +31,14 @@ class PlayerManager(
 
     override var isRunning: Boolean = false
     override var isJumping: Boolean = false
+    override var isUnderWater: Boolean = false
     override var isFreeFlying: Boolean = false
 
     override var walkSpeed: Float = 1f
     override var runSpeed: Float = 3f
     override var runWalkSpeedDelayMaxValue: Float = 0.35f
     override var runWalkSpeedDelayCounter: Float = 0f
+    override var dragSpeed: Float = 1f
 
     override var anglePlaneXZ: Double = 0.0
     override var anglePlaneYZ: Double = 0.0
@@ -85,12 +87,13 @@ class PlayerManager(
         isRunning = gm.inputManager.isKeyPressed(key = GLFW_KEY_LEFT_SHIFT)
         //isJumping = gm.inputManager.isKeyPressed(key = GLFW_KEY_SPACE)
 
+        MovingEntity.checkWater(gm = gm, movingEntity = this)
+        MovingEntity.performSideMovement(gm = gm, movingEntity = this, deltaTime = dt)
         MovingEntity.performJump(gm = gm, movingEntity = this, deltaTime = dt)
         MovingEntity.performFall(gm = gm, movingEntity = this, deltaTime = dt)
-        MovingEntity.performSideMovement(gm = gm, movingEntity = this, deltaTime = dt)
 
         tempEyePosition.x = eyePosition.x
-        tempEyePosition.y = eyePosition.y + collisionHeight/2f
+        tempEyePosition.y = eyePosition.y
         tempEyePosition.z = eyePosition.z
 
         gm.cameraManager.updateViewMatrix(
