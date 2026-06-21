@@ -97,7 +97,7 @@ interface MovingEntity {
             if (movingEntity.isFreeFlying || !movingEntity.isJumping) return
 
             // Caso não esteja contando pulo (não está realizando pulo, então está caindo ou pode estar no chão)
-            // e caso não esteja no chaõ (isBottomBlocked), não realiza pulo e retorna.
+            // e caso não esteja no chaõ (isBottomBlocked), não realiza pulo e retorna do método..
             if (movingEntity.jumpCounter == 0f) {
 
                 if (movingEntity.isUnderWater) {
